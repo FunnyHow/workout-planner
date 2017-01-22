@@ -1,0 +1,6 @@
+.home-section{
+    background: url('/images/home-background.jpg');
+    height:900px;
+    background-size:cover;
+    color:white;
+}

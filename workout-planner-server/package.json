@@ -1,0 +1,20 @@
+{
+  "name": "workout-planner-server",
+  "version": "1.0.0",
+  "description": "Workout planner server app written in Node.js using MongoDb.",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "mongodb": "^2.2.21"
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0",
+    "mockery": "^2.0.0",
+    "sinon": "^1.17.7"
+  }
+}
