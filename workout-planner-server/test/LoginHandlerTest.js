@@ -5,10 +5,11 @@ var mockery = require("mockery");
 var sinon = require("sinon");
 
 describe('LoginHandler', function () {
-    var mockRequest, mongodbMock, mockDb, mockCollection, mockDocument, mockResponse;
+    var mockRequest, mongodbMock, mockDb, mockCollection, mockDocument, mockResponse, mockUuid;
     beforeEach(function () {
         // Delete the module being tested and the dependent modules from the require cache
         delete require.cache[require.resolve("mongodb")];
+        delete require.cache[require.resolve("uuid/v1")];
         delete require.cache[require.resolve("../LoginHandler")];
 
         mockery.enable({
@@ -23,7 +24,7 @@ describe('LoginHandler', function () {
 
         mockDocument = {
             email: "someuser@example.com",
-            password: "hocuspocus",
+            passwordHash: "f0f0d1020694a9a2d2937e16a589e25e368180633ddcb73a885e29c36b25b61c",
             salt: "SALT",
             loginToken: "1nu32h1b3h21jh245",
             expiryDate: new Date().getTime() + 100000
@@ -47,7 +48,10 @@ describe('LoginHandler', function () {
             }
         };
 
+        mockUuid = sinon.stub().returns("00000000-1111-2222-3333-444444444444");
+
         mockery.registerMock('mongodb', mongodbMock);
+        mockery.registerMock('uuid/v1', mockUuid);
 
         mockRequest = {
             cookies: {
@@ -169,17 +173,55 @@ describe('LoginHandler', function () {
                 });
         });
 
-        it('should hash and salt the password provided');
-        it('should find the hashed and salted password for the user in the database');
-        it('should check that the cookie has been set');
-        it('should check that the password is correct');
+        it('should login and resolve if password matches', function () {
+            var LoginHandler = require('../LoginHandler');
+            var loginHandler = new LoginHandler();
+            return loginHandler.login("someuser@example.com", "password", mockRequest, mockResponse)
+             .then(function (login) {
+                 sinon.assert.called(mockCollection.find);
+             });
+        });
+
+        it('should reject if password incorrect', function () {
+            var LoginHandler = require('../LoginHandler');
+            var loginHandler = new LoginHandler();
+            return loginHandler.login("someuser@example.com", "banana", mockRequest, mockResponse)
+                .then(function (login) {
+                    throw "Expected promise to reject";
+                }, function (reason) {
+                    sinon.assert.called(mockCollection.find);
+                });
+        });
+        it('should set the cookie', function () {
+            var LoginHandler = require('../LoginHandler');
+            var loginHandler = new LoginHandler();
+            return loginHandler.login("someuser@example.com", "password", mockRequest, mockResponse)
+                .then(function (login) {
+                    sinon.assert.called(mockResponse.setCookie);
+                    assert.equal(mockResponse.setCookie.getCall(0).args[0], "loginToken");
+                    assert.equal(mockResponse.setCookie.getCall(0).args[1], "00000000-1111-2222-3333-444444444444");
+                    assert(new Date().getTime() - mockResponse.setCookie.getCall(0).args[2].expires.getTime() < -(24 * 60 * 60 * 1000));
+                });
+        });
+          it('should add the login token to the database', function() {
+            var LoginHandler = require('../LoginHandler');
+            var loginHandler = new LoginHandler();
+            return loginHandler.login("someuser@example.com", "password", mockRequest, mockResponse)
+                .then(function (login) {
+                    sinon.assert.called(mockCollection.updateOne);
+                    var args = mockCollection.updateOne.getCall(0).args;
+                    assert.deepEqual(args[0], { email: "someuser@example.com" });
+                    assert.deepEqual(args[1], { $set: { loginToken: "00000000-1111-2222-3333-444444444444" } });
+                });
+        });
+
     });
 
     describe('#logout()', function () {
         it('should clear the cookie on the request', function () {
             var LoginHandler = require('../LoginHandler');
             var loginHandler = new LoginHandler();
-            return loginHandler.logout(req, res)
+            return loginHandler.logout(mockRequest, mockResponse)
                 .then(function (logout) {
                     sinon.assert.called(mockResponse.clearCookie);
                     sinon.assert.calledWith(mockResponse.clearCookie, "loginToken");
@@ -189,12 +231,12 @@ describe('LoginHandler', function () {
         it('should clear the loginToken in mongo', function() {
             var LoginHandler = require('../LoginHandler');
             var loginHandler = new LoginHandler();
-            return loginHandler.logout(req, res)
+            return loginHandler.logout(mockRequest, mockResponse)
                 .then(function (logout) {
                     sinon.assert.called(mockCollection.updateOne);
                     var args = mockCollection.updateOne.getCall(0).args;
                     assert.deepEqual(args[0], { loginToken: "1nu32h1b3h21jh245" });
-                    assert.deepEqual(args[1], { loginToken: null });
+                    assert.deepEqual(args[1], { $set: { loginToken: null } });
                 });
         });
     });
