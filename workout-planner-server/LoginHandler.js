@@ -11,8 +11,10 @@ class LoginHandler {
         // Use connect method to connect to the server
         MongoClient.connect(this.database_url, function (err, db) {
             db.collection("users", function (err2, users_collection) {
-                users_collection.find({ loginToken: loginToken }, function (err3, user) {
-                    callback(err3, user);
+                users_collection.find({ loginToken: loginToken }, function (err3, cursor) {
+                    cursor.next().then(function(user) {
+                        callback(err3, user);
+                    });
                 });
             });
         });
@@ -22,8 +24,10 @@ class LoginHandler {
         // Use connect method to connect to the server
         MongoClient.connect(this.database_url, function (err, db) {
             db.collection("users", function (err2, users_collection) {
-                users_collection.find({ email: email }, function (err3, user) {
-                    callback(err3, user);
+                users_collection.find({ email: email }, function (err3, cursor) {
+                    cursor.next().then(function(user) {
+                        callback(err3, user);
+                    });
                 });
             });
         });

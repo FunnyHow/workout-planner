@@ -5,7 +5,15 @@ var mockery = require("mockery");
 var sinon = require("sinon");
 
 describe('LoginHandler', function () {
-    var mockRequest, mongodbMock, mockDb, mockCollection, mockDocument, mockResponse, mockUuid;
+    var mockRequest, mongodbMock, mockDb, mockCollection, mockDocument, mockResponse, mockUuid, mockCursor;
+
+    function cursorFor(obj) {
+        return {
+            hasNext: sinon.stub().returns(!!obj),
+            next: sinon.stub().returns(Promise.resolve(obj))
+        }
+    }
+
     beforeEach(function () {
         // Delete the module being tested and the dependent modules from the require cache
         delete require.cache[require.resolve("mongodb")];
@@ -30,9 +38,14 @@ describe('LoginHandler', function () {
             expiryDate: new Date().getTime() + 100000
         };
 
+        mockCursor = {
+            hasNext: sinon.stub().returns(true),
+            next: sinon.stub().returns(Promise.resolve(mockDocument))
+        };
+
         mockCollection = {
             // Mocked the find method to return our mocked document above
-            find: sinon.stub().callsArgWith(1, null, mockDocument),
+            find: sinon.stub().callsArgWith(1, null, mockCursor),
             updateOne: sinon.stub()
         };
 
@@ -86,7 +99,7 @@ describe('LoginHandler', function () {
         it('should resolve false if the cookie is present but the database doesnt have it', function () {
             var LoginHandler = require('../LoginHandler');
             var loginHandler = new LoginHandler();
-            mockCollection.find = sinon.stub().callsArgWith(1, null, null);
+            mockCollection.find = sinon.stub().callsArgWith(1, null, cursorFor(null));
             return loginHandler.isLoggedIn(mockRequest, mockResponse)
                 .then(function (isLoggedIn) {
                     throw "Expected promise to reject";
@@ -100,11 +113,11 @@ describe('LoginHandler', function () {
             var LoginHandler = require('../LoginHandler');
             var loginHandler = new LoginHandler();
             mockCollection.find = sinon.stub().callsArgWith(1, null,
-                {
+                cursorFor({
                     email: "someuser@example.com",
                     loginToken: "1nu32h1b3h21jh245",
                     expiryDate: new Date().getTime() - 10000
-                }
+                })
             );
             return loginHandler.isLoggedIn(mockRequest, mockResponse)
                 .then(function (isLoggedIn) {
@@ -119,11 +132,11 @@ describe('LoginHandler', function () {
             var LoginHandler = require('../LoginHandler');
             var loginHandler = new LoginHandler();
             mockCollection.find = sinon.stub().callsArgWith(1, null,
-                {
+                cursorFor({
                     email: "someuser@example.com",
                     loginToken: "1nu32h1b3h21jh245",
                     expiryDate: new Date().getTime() - 10000
-                }
+                })
             );
             // Track any calls to loginHandler.logout
             var logoutSpy = sinon.spy(loginHandler, "logout");
@@ -163,7 +176,7 @@ describe('LoginHandler', function () {
         it('should reject if email does not match one in the database', function () {
             var LoginHandler = require('../LoginHandler');
             var loginHandler = new LoginHandler();
-            mockCollection.find = sinon.stub().callsArgWith(1, null, null);
+            mockCollection.find = sinon.stub().callsArgWith(1, null, cursorFor(null));
             return loginHandler.login("drPlatypus@pretendemail.com", "password", mockRequest, mockResponse)
                 .then(function (login) {
                     throw "Expected promise to reject";
@@ -177,9 +190,9 @@ describe('LoginHandler', function () {
             var LoginHandler = require('../LoginHandler');
             var loginHandler = new LoginHandler();
             return loginHandler.login("someuser@example.com", "password", mockRequest, mockResponse)
-             .then(function (login) {
-                 sinon.assert.called(mockCollection.find);
-             });
+                .then(function (login) {
+                    sinon.assert.called(mockCollection.find);
+                });
         });
 
         it('should reject if password incorrect', function () {
@@ -203,7 +216,7 @@ describe('LoginHandler', function () {
                     assert(new Date().getTime() - mockResponse.setCookie.getCall(0).args[2].expires.getTime() < -(24 * 60 * 60 * 1000));
                 });
         });
-          it('should add the login token to the database', function() {
+        it('should add the login token to the database', function () {
             var LoginHandler = require('../LoginHandler');
             var loginHandler = new LoginHandler();
             return loginHandler.login("someuser@example.com", "password", mockRequest, mockResponse)
@@ -228,7 +241,7 @@ describe('LoginHandler', function () {
                 });
         });
 
-        it('should clear the loginToken in mongo', function() {
+        it('should clear the loginToken in mongo', function () {
             var LoginHandler = require('../LoginHandler');
             var loginHandler = new LoginHandler();
             return loginHandler.logout(mockRequest, mockResponse)
