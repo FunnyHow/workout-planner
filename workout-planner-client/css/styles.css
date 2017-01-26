@@ -1,6 +1,48 @@
+/*navbar styles*/
+#navbar-home{
+    margin-bottom:0;
+}
+.navbar-brand {
+    height:60px;
+    padding:7px 7px;
+}
+.brand-image {
+   max-width:45px;
+   margin-right: 10px;
+} 
+.navbar-brand>img{
+    display:inline-block;
+}         
+/*homepage styles */
 .home-section{
+    padding-top:0;
     background: url('/images/home-background.jpg');
     height:900px;
     background-size:cover;
     color:white;
+}
+#email, #password{
+    max-width:50%;
+}
+
+#signin-error {
+    padding-top: 2rem;
+    max-width:50%;
+}
+
+/*dashboard styles */
+.dashboard-img{
+    max-width:350px;
+}
+.dashboard-option:hover{    
+    cursor:pointer;
+}
+.dashboard-option{
+    text-align:center;
+}
+
+/* shared styles */
+#credit{
+    font-size:10px;
+    margin-top:100px;
 }

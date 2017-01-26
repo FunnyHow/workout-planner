@@ -14,10 +14,10 @@ server.use(restify.bodyParser());
 server.get('/', function (req, res, next) {
     loginHandler = new LoginHandler();
     loginHandler.isLoggedIn(req, res)
-        .then(function() {
+        .then(function () {
             res.send(200, "You are logged in");
             next();
-        }, function(reason) {
+        }, function (reason) {
             res.send(401, reason);
             next();
         });
@@ -27,24 +27,36 @@ server.get('/', function (req, res, next) {
 server.post('/login', function (req, res, next) {
     loginHandler = new LoginHandler();
     loginHandler.login(req.body.email, req.body.password, req, res)
-        .then(function() {
+        .then(function () {
             res.send(200, "You are logged in");
             next();
-        }, function(reason) {
+        }, function (reason) {
+            res.send(401, reason);
+            next();
+        });
+});
+
+server.post('/login', function (req, res, next) {
+    loginHandler = new LoginHandler();
+    loginHandler.login(req.body.email, req.body.password, req, res)
+        .then(function () {
+            res.send(200, "You are logged in");
+            next();
+        }, function (reason) {
             res.send(401, reason);
             next();
         });
 });
 
 // curl -XDELETE -i localhost:7777/login -H "Cookie: COOKIEGOESHERE"
-server.del('/login', function (req, res, next) {
+server.get('/email', function (req, res, next) {
     loginHandler = new LoginHandler();
-    loginHandler.logout(req, res)
-        .then(function() {
-            res.send(200, "You are logged out");
+    loginHandler.isLoggedIn(req, res)
+        .then(function (user) {
+            res.send(200, { email: user.email });
             next();
-        }, function(reason) {
-            res.send(500, reason);
+        }, function (reason) {
+            res.send(401, reason);
             next();
         });
 });

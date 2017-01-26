@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>My Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+    <script src="js/sign-in.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+                    aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+                <a class="navbar-brand" href="#"><img class="brand-image" src="images/dumbbell.png" />Workout Planner</a>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+        <!-- /.container-fluid -->
+    </nav>
+
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Welcome <span id="email"></span></h1>
+            <h3>Get started by choosing one of the options below.</h3>
+        </div>
+        <div class="row">
+            <div class="dashboard-option col-md-4 col-lg-4">
+                <img class="dashboard-img" src="/images/workout.jpg" />
+                <p>Log workout</p>
+            </div>
+            <div class="dashboard-option col-md-4 col-lg-4">
+                <img class="dashboard-img" src="/images/nutrition.jpg" />
+                <p>Log nutrition</p>
+            </div>
+            <div class="dashboard-option col-md-4 col-lg-4">
+                <img class="dashboard-img" src="/images/measurement.jpg" />
+                <p>Log measurements</p>
+            </div>
+        </div>
+        <div id="credit">Icons made by <a href="http://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a>            from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"
+                title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+
+
+</body>
+<script>
+$(function() {
+    getEmail();
+});
+</script>
+
+</html>

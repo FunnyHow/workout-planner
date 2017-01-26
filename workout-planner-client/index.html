@@ -6,15 +6,16 @@
     <title>My Workout Planner</title>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
         crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
         crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/styles.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
+    <script src="js/sign-in.js"></script>
 </head>
 
 <body>
-    <nav class="navbar navbar-default">
+    <nav id="navbar-home" class="navbar navbar-default">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
@@ -24,11 +25,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-                <a class="navbar-brand" href="#">Par-fit</a>
+                <a class="navbar-brand" href="#">
+                    <img class="brand-image" src="images/dumbbell.png" />Workout Planner
+                </a>
             </div>
         </div>
         <!-- /.navbar-collapse -->
-        </div>
         <!-- /.container-fluid -->
     </nav>
     <div class="home-section">
@@ -36,24 +38,30 @@
             <h1>Welcome to your workout planner</h1>
             <p>Your gym companion.</p>
 
-            <form>
+            <form id="sign-in-form">
                 <div class="form-group">
                     <label for="email">Email:</label>
                     <input type="email" class="form-control" id="email" placeholder="Enter email">
                 </div>
                 <div class="form-group">
-                    <label for="pwd">Password:</label>
-                    <input type="password" class="form-control" id="pwd" placeholder="Enter password">
+                    <label for="password">Password:</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter password">
                 </div>
                 <div class="checkbox">
                     <label><input type="checkbox"> Remember me</label>
                 </div>
-                <button type="submit" class="btn btn-default" id="sign-in">Sign in</button>
+                <button type="submit" class="btn btn-default">Sign in</button>
             </form>
+            <div id="signin-error">
+            </div>
         </div>
 
     </div>
     </div>
+    <div id="credit">Icons made by <a href="http://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a> from
+        <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"
+            title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+
 </body>
 
 </html>

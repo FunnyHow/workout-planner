@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "mocha",
-    "start": "node server.js"
+    "start": "concurrently \"node server.js\" \"mongod --dbpath=mongo-data\""
   },
   "author": "",
   "license": "UNLICENSED",
@@ -16,6 +16,7 @@
     "uuid": "^3.0.1"
   },
   "devDependencies": {
+    "concurrently": "^3.1.0",
     "mocha": "^3.2.0",
     "mockery": "^2.0.0",
     "sinon": "^1.17.7"

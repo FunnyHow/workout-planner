@@ -14,6 +14,8 @@ class LoginHandler {
                 users_collection.find({ loginToken: loginToken }, function (err3, cursor) {
                     cursor.next().then(function(user) {
                         callback(err3, user);
+                    }, function(reason) {
+                        callback(reason, null);
                     });
                 });
             });
@@ -27,6 +29,8 @@ class LoginHandler {
                 users_collection.find({ email: email }, function (err3, cursor) {
                     cursor.next().then(function(user) {
                         callback(err3, user);
+                    }, function(reason) {
+                        callback(reason, null);
                     });
                 });
             });
@@ -76,7 +80,7 @@ class LoginHandler {
                 if (user != null) {
                     if (self.checkCookieExpiry(user)) {
                         self.extendingCookie(res, req.cookies["loginToken"]);
-                        resolve(true);
+                        resolve(user);
                     } else {
                         reject("Cookie expired");
                         self.logout();
